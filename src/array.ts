@@ -7,10 +7,8 @@ import type { Arrayable, Nullable } from './types'
  * @category Array
  */
 export function toArray<T>(array?: Nullable<Arrayable<T>>): Array<T> {
-  array = array || []
-  if (Array.isArray(array))
-    return array
-  return [array]
+  array = array ?? []
+  return Array.isArray(array) ? array : [array]
 }
 
 /**
@@ -69,6 +67,20 @@ export function partition<T>(array: readonly T[], ...filters: PartitionFilter<T>
  */
 export function uniq<T>(array: readonly T[]): T[] {
   return Array.from(new Set(array))
+}
+
+/**
+ * Unique an Array by a custom equality function
+ *
+ * @category Array
+ */
+export function uniqueBy<T>(array: readonly T[], equalFn: (a: any, b: any) => boolean): T[] {
+  return array.reduce((acc: T[], cur: any) => {
+    const index = acc.findIndex((item: any) => equalFn(cur, item))
+    if (index === -1)
+      acc.push(cur)
+    return acc
+  }, [])
 }
 
 /**

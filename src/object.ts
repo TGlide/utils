@@ -55,7 +55,7 @@ export function isKeyOf<T extends object>(obj: T, k: keyof any): k is keyof T {
  * @category Object
  */
 export function objectKeys<T extends object>(obj: T) {
-  return Object.keys(obj) as Array<keyof T>
+  return Object.keys(obj) as Array<`${keyof T & (string | number | boolean | null | undefined)}`>
 }
 
 /**
@@ -82,6 +82,7 @@ export function deepMerge<T extends object = object, S extends object = T>(targe
 
   if (isMergableObject(target) && isMergableObject(source)) {
     objectKeys(source).forEach((key) => {
+      // @ts-expect-error
       if (isMergableObject(source[key])) {
         // @ts-expect-error
         if (!target[key])
@@ -110,7 +111,7 @@ function isMergableObject(item: any): item is Object {
  *
  * @category Object
  */
-export function objectPick<O, T extends keyof O>(obj: O, keys: T[], omitUndefined = false) {
+export function objectPick<O extends object, T extends keyof O>(obj: O, keys: T[], omitUndefined = false) {
   return keys.reduce((n, k) => {
     if (k in obj) {
       if (!omitUndefined || obj[k] !== undefined)
